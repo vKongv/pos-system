@@ -1,25 +1,24 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { Tabs } from 'antd';
 import './App.css';
+
+const TabPane = Tabs.TabPane;
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Tabs defaultActiveKey="1">
+          <TabPane tab="Sales" key="1">
+            Record sales here
+          </TabPane>
+          <TabPane tab="Buying" key="2">
+            Record buying transaction here
+          </TabPane>
+          <TabPane tab="Profit" key="3">
+            Calculate profit here
+          </TabPane>
+        </Tabs>
       </div>
     );
   }
