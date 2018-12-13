@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Tabs } from 'antd';
+
+import { calcTotalAmount } from './utils/helpers';
 import TransactionList from './TransactionList';
 import './App.css';
 
@@ -14,7 +16,15 @@ const getRecordsFromType = (type, state) => {
     default:
       throw new Error('type is not supported');
   }
-}
+};
+
+const Profit = ({ totalSales, totalExpenses }) => (
+  <Fragment>
+    <p>Your sales: RM {totalSales}</p>
+    <p>Your expenses: RM {totalExpenses}</p>
+    <p>Net profit: RM {totalSales - totalExpenses}</p>
+  </Fragment>
+);
 
 class App extends Component {
   state = {
@@ -31,8 +41,6 @@ class App extends Component {
     });
   };
 
-  handleOnAddExpensesRecord
-
   render() {
     const { sales, expenses } = this.state;
     return (
@@ -46,14 +54,18 @@ class App extends Component {
             />
           </TabPane>
           <TabPane tab="Expenses" key="2">
-          <h1 className="title">Transactions</h1>
+            <h1 className="title">Transactions</h1>
             <TransactionList
               transactions={expenses}
               onAddTransaction={this.handleOnAddRecord('expenses')}
             />
           </TabPane>
           <TabPane tab="Profit" key="3">
-            Calculate profit here
+            <h1 className="title">Your Profit</h1>
+            <Profit
+              totalSales={calcTotalAmount(sales)}
+              totalExpenses={calcTotalAmount(expenses)}
+            />
           </TabPane>
         </Tabs>
       </div>

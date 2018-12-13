@@ -2,9 +2,15 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Button, Row, Modal, Form, Input, InputNumber } from 'antd';
 
+import { calcTotalAmount } from './utils/helpers'
+
 const FormItem = Form.Item;
 
 const columns = [
+  {
+    title: 'No.',
+    dataIndex: 'key'
+  },
   {
     title: 'Item',
     dataIndex: 'item'
@@ -16,9 +22,6 @@ const columns = [
     render: text => <span>{Number(text).toFixed(2)}</span>
   }
 ];
-
-const calcTotalAmount = transactions =>
-  transactions.reduce((total, current) => total + current.amount, 0).toFixed(2);
 
 const Footer = ({ transactions }) => {
   return (
