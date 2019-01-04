@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Button, Row, Modal, Form, Input, InputNumber } from 'antd';
 
-import { calcTotalAmount, calcGSTAmount } from './utils/helpers';
+import { calcTotalAmount, calcGSTAmount, calcTotal } from './utils/helpers';
 
 const FormItem = Form.Item;
 
@@ -45,7 +45,8 @@ const Footer = ({ transactions }) => {
   return (
     <div style={{ width: '100%', textAlign: 'right' }}>
       <h3>Total GST: RM {calcGSTAmount(transactions)}</h3>
-      <h3>Total: RM {calcTotalAmount(transactions)}</h3>
+      <h3>Total: RM {calcTotal(transactions)}</h3>
+      <h3>Total After GST: RM {calcTotalAmount(transactions)}</h3>
     </div>
   );
 };
