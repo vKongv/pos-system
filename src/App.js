@@ -1,8 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import { Tabs } from 'antd';
 
-import { calcTotalAmount } from './utils/helpers';
+import { calcTotalAmount, calculateGST } from './utils/helpers';
 import TransactionList from './TransactionList';
+import TaxList from './TaxList';
 import './App.css';
 
 const TabPane = Tabs.TabPane;
@@ -13,23 +14,40 @@ const getRecordsFromType = (type, state) => {
       return state.sales;
     case 'expenses':
       return state.expenses;
+    case 'taxes':
+      return state.taxes;
     default:
       throw new Error('type is not supported');
   }
 };
 
-const Profit = ({ totalSales, totalExpenses }) => (
+const Profit = ({ totalSales, totalExpenses, salesGst, expensesGst }) => (
   <Fragment>
-    <p>Your sales: RM {totalSales}</p>
+    <p>Your Sales: RM {totalSales}</p>
+    <p>Total Sales GST: RM {salesGst}</p>
+    <br />
     <p>Your expenses: RM {totalExpenses}</p>
+    <p>Total Expenses GST: RM {expensesGst}</p>
+    <br />
     <p>Net profit: RM {totalSales - totalExpenses}</p>
   </Fragment>
 );
 
 class App extends Component {
   state = {
-    sales: [{ key: '1', item: 'Shoes', amount: 100 }],
-    expenses: [{ key: '1', item: 'Some random thing', amount: 10 }]
+    sales: [
+      { key: '1', item: 'Shoes', amount: 100, taxCharge: 6, grandTotal: 106 }
+    ],
+    expenses: [
+      {
+        key: '1',
+        item: 'Some random thing',
+        amount: 10,
+        taxCharge: 0.6,
+        grandTotal: 10.6
+      }
+    ],
+    taxes: [{ key: '1', tax: 'GST', percentage: 6 }]
   };
 
   handleOnAddRecord = type => newRecord => {
@@ -41,8 +59,26 @@ class App extends Component {
     });
   };
 
+  handleOnEditRecord = type => newRecord => {
+    this.setState(prevState => {
+      let records = getRecordsFromType(type, prevState);
+      let currentRecord = records.filter(
+        record => record.key === newRecord.key
+      )[0];
+      if (currentRecord) {
+        currentRecord.tax = newRecord.tax;
+        currentRecord.percentage = newRecord.percentage;
+      } else {
+        records.push(newRecord);
+      }
+      return {
+        [type]: records
+      };
+    });
+  };
+
   render() {
-    const { sales, expenses } = this.state;
+    const { sales, expenses, taxes } = this.state;
     return (
       <div className="root">
         <Tabs defaultActiveKey="1">
@@ -50,6 +86,7 @@ class App extends Component {
             <h1 className="title">Transactions</h1>
             <TransactionList
               transactions={sales}
+              tax={taxes[0]}
               onAddTransaction={this.handleOnAddRecord('sales')}
             />
           </TabPane>
@@ -57,6 +94,7 @@ class App extends Component {
             <h1 className="title">Transactions</h1>
             <TransactionList
               transactions={expenses}
+              tax={taxes[0]}
               onAddTransaction={this.handleOnAddRecord('expenses')}
             />
           </TabPane>
@@ -65,6 +103,16 @@ class App extends Component {
             <Profit
               totalSales={calcTotalAmount(sales)}
               totalExpenses={calcTotalAmount(expenses)}
+              salesGst={calculateGST(sales)}
+              expensesGst={calculateGST(expenses)}
+            />
+          </TabPane>
+          <TabPane tab="Tax Configuration" key="4">
+            <h1 className="title">Tax Configuration</h1>
+            <TaxList
+              taxes={taxes}
+              onAddTax={this.handleOnAddRecord('taxes')}
+              onEditTax={this.handleOnEditRecord('taxes')}
             />
           </TabPane>
         </Tabs>

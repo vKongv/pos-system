@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Button, Row, Modal, Form, Input, InputNumber } from 'antd';
 
-import { calcTotalAmount } from './utils/helpers'
+import { calcTotalAmount } from './utils/helpers';
 
 const FormItem = Form.Item;
 
@@ -18,6 +18,18 @@ const columns = [
   {
     title: 'Amount (RM)',
     dataIndex: 'amount',
+    className: 'column-amount',
+    render: text => <span>{Number(text).toFixed(2)}</span>
+  },
+  {
+    title: 'Tax Charge (RM)',
+    dataIndex: 'taxCharge',
+    className: 'column-amount',
+    render: text => <span>{Number(text).toFixed(2)}</span>
+  },
+  {
+    title: 'Grand Total (RM)',
+    dataIndex: 'grandTotal',
     className: 'column-amount',
     render: text => <span>{Number(text).toFixed(2)}</span>
   }
@@ -64,9 +76,13 @@ class TransactionList extends Component {
   };
 
   handleOnAddConfirm = () => {
-    const { form, onAddTransaction } = this.props;
+    const { form, onAddTransaction, tax } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
+        console.log('tax :', tax);
+        console.log('values.amount :', values.amount);
+        values.taxCharge = (values.amount * tax.percentage) / 100;
+        values.grandTotal = values.amount + values.taxCharge;
         onAddTransaction(values);
         this.setState({
           isAddTransactionClicked: false
@@ -83,7 +99,7 @@ class TransactionList extends Component {
   };
 
   render() {
-    const { transactions, form } = this.props;
+    const { transactions, form, tax } = this.props;
     const { isAddTransactionClicked } = this.state;
 
     return (
@@ -114,11 +130,12 @@ TransactionList.propTypes = {
   form: PropTypes.object.isRequired,
   onAddTransaction: PropTypes.func.isRequired,
   transactions: PropTypes.array.isRequired,
+  tax: PropTypes.object.isRequired
 };
 
 TransactionList.defaultProps = {
   transactions: [],
-  onAddTransaction: () => {},
+  onAddTransaction: () => {}
 };
 
 export default Form.create()(TransactionList);
