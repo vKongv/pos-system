@@ -1,13 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { Tabs } from 'antd';
 
-import { calcTotalAmount } from './utils/helpers';
+import { calcTotalAmount, calcGSTAmount } from './utils/helpers';
 import TransactionList from './TransactionList';
 import './App.css';
 
 const TabPane = Tabs.TabPane;
 
 const getRecordsFromType = (type, state) => {
+  console.log('state :', state.expenses);
   switch (type) {
     case 'sales':
       return state.sales;
@@ -18,31 +19,59 @@ const getRecordsFromType = (type, state) => {
   }
 };
 
-const Profit = ({ totalSales, totalExpenses }) => (
+const Profit = ({ totalSales, totalExpenses, totalGST }) => (
   <Fragment>
     <p>Your sales: RM {totalSales}</p>
     <p>Your expenses: RM {totalExpenses}</p>
-    <p>Net profit: RM {totalSales - totalExpenses}</p>
+    <p>Total GST: RM {totalGST.toFixed(2)}</p>
+    <p>Net profit: RM {(totalSales - totalExpenses).toFixed(2)}</p>
   </Fragment>
 );
 
 class App extends Component {
   state = {
-    sales: [{ key: '1', item: 'Shoes', amount: 100 }],
-    expenses: [{ key: '1', item: 'Some random thing', amount: 10 }]
+    sales: [
+      {
+        key: '1',
+        item: 'Shoes',
+        gst: 3,
+        amount: 100,
+        totalgst: 12.31,
+        total: 112.31
+      }
+    ],
+    expenses: [
+      {
+        key: '1',
+        item: 'Some random thing',
+        gst: 3,
+        amount: 10,
+        totalgst: 11.3,
+        total: 111.1
+      }
+    ]
   };
 
   handleOnAddRecord = type => newRecord => {
     this.setState(prevState => {
       let records = getRecordsFromType(type, prevState);
       return {
-        [type]: [...records, { ...newRecord, key: `${records.length + 1}` }]
+        [type]: [
+          ...records,
+          {
+            ...newRecord,
+            totalgst: `${(newRecord.amount * newRecord.gst) / 100}`,
+            total: `${(newRecord.amount * newRecord.gst) / 100 +
+              newRecord.amount}`,
+            key: `${records.length + 1}`
+          }
+        ]
       };
     });
   };
 
   render() {
-    const { sales, expenses } = this.state;
+    const { sales, expenses, totalgst } = this.state;
     return (
       <div className="root">
         <Tabs defaultActiveKey="1">
@@ -65,6 +94,9 @@ class App extends Component {
             <Profit
               totalSales={calcTotalAmount(sales)}
               totalExpenses={calcTotalAmount(expenses)}
+              totalGST={
+                Number(calcGSTAmount(sales)) + Number(calcGSTAmount(expenses))
+              }
             />
           </TabPane>
         </Tabs>
