@@ -132,7 +132,7 @@ TransactionList.propTypes = {
   form: PropTypes.object.isRequired,
   onAddTransaction: PropTypes.func.isRequired,
   transactions: PropTypes.array.isRequired,
-  tax: PropTypes.object.isRequired
+  tax: PropTypes.object
 };
 
 TransactionList.defaultProps = {
