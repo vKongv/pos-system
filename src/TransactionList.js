@@ -1,6 +1,15 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Button, Row, Modal, Form, Input, InputNumber } from 'antd';
+import {
+  Table,
+  Button,
+  Row,
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  message
+} from 'antd';
 
 import { calcTotalAmount, calcGSTAmount, calcTotal } from './utils/helpers';
 
@@ -97,6 +106,7 @@ class TransactionList extends Component {
           isAddTransactionClicked: false
         });
         form.resetFields();
+        message.success('Succesfully added item!');
       }
     });
   };
