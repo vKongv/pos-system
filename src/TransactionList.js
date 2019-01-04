@@ -77,11 +77,13 @@ class TransactionList extends Component {
 
   handleOnAddConfirm = () => {
     const { form, onAddTransaction, tax } = this.props;
+    let currentTax = tax;
+    if (!currentTax) {
+      currentTax = { percentage: 0 };
+    }
     form.validateFields((err, values) => {
       if (!err) {
-        console.log('tax :', tax);
-        console.log('values.amount :', values.amount);
-        values.taxCharge = (values.amount * tax.percentage) / 100;
+        values.taxCharge = (values.amount * currentTax.percentage) / 100;
         values.grandTotal = values.amount + values.taxCharge;
         onAddTransaction(values);
         this.setState({

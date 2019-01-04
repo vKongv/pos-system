@@ -1,10 +1,18 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Button, Row, Modal, Form, Input, InputNumber } from 'antd';
-
-import { calcTotalAmount } from './utils/helpers';
+import {
+  Table,
+  Button,
+  Row,
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  Radio
+} from 'antd';
 
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
 
 const columns = [
   {
@@ -15,7 +23,12 @@ const columns = [
     title: 'Tax',
     dataIndex: 'tax'
   },
-
+  {
+    title: 'Activate this',
+    render: (text, record) => (
+      <Radio value={record} checked={record.key === 1} />
+    )
+  },
   {
     title: 'Percentage (%)',
     dataIndex: 'percentage',
@@ -74,7 +87,8 @@ class TaxList extends Component {
   state = {
     isAddTaxClicked: false,
     isEditTaxClicked: false,
-    currentTaxRecord: {}
+    currentTaxRecord: {},
+    selectedTax: {}
   };
 
   handleOnAddTaxClick = () => {
@@ -137,9 +151,14 @@ class TaxList extends Component {
     });
   };
 
+  onTaxChange = e => {
+    this.setState({ selectedTax: e.target.value });
+    this.props.changeSelectedTax(e.target.value);
+  };
+
   render() {
     const { taxes, form } = this.props;
-    const { isAddTaxClicked, isEditTaxClicked } = this.state;
+    const { isAddTaxClicked, isEditTaxClicked, selectedTax } = this.state;
 
     return (
       <Fragment>
@@ -158,18 +177,20 @@ class TaxList extends Component {
         <Row style={{ marginBottom: '12px' }}>
           <Button onClick={this.handleOnAddTaxClick}>Add a tax</Button>
         </Row>
-        <Table
-          columns={columns}
-          dataSource={taxes}
-          pagination={false}
-          onRow={record => {
-            return {
-              onClick: () => {
-                this.handleOnEditTaxClick(record);
-              }
-            };
-          }}
-        />
+        <RadioGroup onChange={this.onTaxChange} value={selectedTax}>
+          <Table
+            columns={columns}
+            dataSource={taxes}
+            pagination={false}
+            onRow={record => {
+              return {
+                onClick: () => {
+                  this.handleOnEditTaxClick(record);
+                }
+              };
+            }}
+          />
+        </RadioGroup>
       </Fragment>
     );
   }
@@ -179,7 +200,8 @@ TaxList.propTypes = {
   form: PropTypes.object.isRequired,
   onAddTax: PropTypes.func.isRequired,
   onEditTax: PropTypes.func.isRequired,
-  taxes: PropTypes.array.isRequired
+  taxes: PropTypes.array.isRequired,
+  changeSelectedTax: PropTypes.func.isRequired
 };
 
 TaxList.defaultProps = {

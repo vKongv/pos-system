@@ -35,19 +35,10 @@ const Profit = ({ totalSales, totalExpenses, salesGst, expensesGst }) => (
 
 class App extends Component {
   state = {
-    sales: [
-      { key: '1', item: 'Shoes', amount: 100, taxCharge: 6, grandTotal: 106 }
-    ],
-    expenses: [
-      {
-        key: '1',
-        item: 'Some random thing',
-        amount: 10,
-        taxCharge: 0.6,
-        grandTotal: 10.6
-      }
-    ],
-    taxes: [{ key: '1', tax: 'GST', percentage: 6 }]
+    sales: [],
+    expenses: [],
+    taxes: [],
+    currentSelectedTax: undefined
   };
 
   handleOnAddRecord = type => newRecord => {
@@ -77,8 +68,12 @@ class App extends Component {
     });
   };
 
+  handleOnTaxChanged = tax => {
+    this.setState({ currentSelectedTax: tax });
+  };
+
   render() {
-    const { sales, expenses, taxes } = this.state;
+    const { sales, expenses, taxes, currentSelectedTax } = this.state;
     return (
       <div className="root">
         <Tabs defaultActiveKey="1">
@@ -86,7 +81,7 @@ class App extends Component {
             <h1 className="title">Transactions</h1>
             <TransactionList
               transactions={sales}
-              tax={taxes[0]}
+              tax={currentSelectedTax}
               onAddTransaction={this.handleOnAddRecord('sales')}
             />
           </TabPane>
@@ -94,7 +89,7 @@ class App extends Component {
             <h1 className="title">Transactions</h1>
             <TransactionList
               transactions={expenses}
-              tax={taxes[0]}
+              tax={currentSelectedTax}
               onAddTransaction={this.handleOnAddRecord('expenses')}
             />
           </TabPane>
@@ -113,6 +108,7 @@ class App extends Component {
               taxes={taxes}
               onAddTax={this.handleOnAddRecord('taxes')}
               onEditTax={this.handleOnEditRecord('taxes')}
+              changeSelectedTax={this.handleOnTaxChanged}
             />
           </TabPane>
         </Tabs>
