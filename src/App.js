@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Tabs } from 'antd';
 
-import { calcTotalAmount } from './utils/helpers';
+import { calcTotalAmount, calcTotalTax } from './utils/helpers';
 import TransactionList from './TransactionList';
 import './App.css';
 
@@ -18,18 +18,60 @@ const getRecordsFromType = (type, state) => {
   }
 };
 
-const Profit = ({ totalSales, totalExpenses }) => (
+const Profit = ({
+  totalSales,
+  totalExpenses,
+  totalSalesTaxes,
+  totalExpensesTaxes
+}) => (
   <Fragment>
-    <p>Your sales: RM {totalSales}</p>
-    <p>Your expenses: RM {totalExpenses}</p>
-    <p>Net profit: RM {totalSales - totalExpenses}</p>
+    <p>Your sales (before tax): RM {totalSales}</p>
+    <p>
+      Your sales (after tax): RM{' '}
+      {(Number(totalSales) + Number(totalSalesTaxes)).toFixed(2)}
+    </p>
+    <p>Your expenses (before tax): RM {totalExpenses}</p>
+    <p>
+      Your expenses (after tax): RM{' '}
+      {(Number(totalExpenses) + Number(totalExpensesTaxes)).toFixed(2)}
+    </p>
+    <p>
+      Nettt Profit: RM{' '}
+      {(
+        Number(totalSales) +
+        Number(totalSalesTaxes) -
+        Number(totalExpenses) +
+        Number(totalExpensesTaxes)
+      ).toFixed(2)}
+    </p>
+    <hr />
+    <p>
+      Nettt Tax: RM{' '}
+      {(Number(totalSalesTaxes) - Number(totalExpensesTaxes)).toFixed(2)}
+    </p>
   </Fragment>
 );
 
 class App extends Component {
   state = {
-    sales: [{ key: '1', item: 'Shoes', amount: 100 }],
-    expenses: [{ key: '1', item: 'Some random thing', amount: 10 }]
+    sales: [
+      {
+        key: '1',
+        item: 'Shoes',
+        amount: 100,
+        category: { category: 'Goods', gstApplicable: true },
+        tax: 6
+      }
+    ],
+    expenses: [
+      {
+        key: '1',
+        item: 'Some random thing',
+        amount: 10,
+        category: { category: 'Sad Shit', gstApplicable: false },
+        tax: 0.6
+      }
+    ]
   };
 
   handleOnAddRecord = type => newRecord => {
@@ -61,10 +103,12 @@ class App extends Component {
             />
           </TabPane>
           <TabPane tab="Profit" key="3">
-            <h1 className="title">Your Profit</h1>
+            <h1 className="title">Your Report</h1>
             <Profit
               totalSales={calcTotalAmount(sales)}
               totalExpenses={calcTotalAmount(expenses)}
+              totalSalesTaxes={calcTotalTax(sales)}
+              totalExpensesTaxes={calcTotalTax(expenses)}
             />
           </TabPane>
         </Tabs>
