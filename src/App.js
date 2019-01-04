@@ -8,7 +8,6 @@ import './App.css';
 const TabPane = Tabs.TabPane;
 
 const getRecordsFromType = (type, state) => {
-  console.log('state :', state.expenses);
   switch (type) {
     case 'sales':
       return state.sales;

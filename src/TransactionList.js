@@ -28,13 +28,13 @@ const columns = [
     render: text => <span>{Number(text)}</span>
   },
   {
-    title: 'Total GST(RM)',
+    title: 'Total GST (RM)',
     dataIndex: 'totalgst',
     className: 'column-totalgst',
     render: text => <span>{Number(text).toFixed(2)}</span>
   },
   {
-    title: 'Total Amount(RM)',
+    title: 'Total Amount (RM)',
     dataIndex: 'total',
     className: 'column-total',
     render: text => <span>{Number(text).toFixed(2)}</span>
