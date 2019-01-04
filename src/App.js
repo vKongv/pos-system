@@ -29,26 +29,8 @@ const Profit = ({ totalSales, totalExpenses, totalGST }) => (
 
 class App extends Component {
   state = {
-    sales: [
-      {
-        key: '1',
-        item: 'Shoes',
-        gst: 3,
-        amount: 100,
-        totalgst: 12.31,
-        total: 112.31
-      }
-    ],
-    expenses: [
-      {
-        key: '1',
-        item: 'Some random thing',
-        gst: 3,
-        amount: 10,
-        totalgst: 11.3,
-        total: 111.1
-      }
-    ]
+    sales: [],
+    expenses: []
   };
 
   handleOnAddRecord = type => newRecord => {
