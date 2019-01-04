@@ -72,7 +72,7 @@ const AddTransactionModal = ({ isVisible, onConfirm, onCancel, form }) => (
     <FormItem label="GST Percentage (%)">
       {form.getFieldDecorator('gst', {
         rules: [{ required: true, message: 'Please provide the GST amount!' }]
-      })(<InputNumber min={1} />)}
+      })(<InputNumber min={0} />)}
     </FormItem>
   </Modal>
 );
